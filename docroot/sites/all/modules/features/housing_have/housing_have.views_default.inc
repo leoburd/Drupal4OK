@@ -123,6 +123,7 @@ function housing_have_views_default_views() {
   $handler->display->display_options['filters']['field_house_details_value']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_house_details_value']['expose']['operator_id'] = 'field_house_details_value_op';
   $handler->display->display_options['filters']['field_house_details_value']['expose']['label'] = 'I need a house that would:';
+  $handler->display->display_options['filters']['field_house_details_value']['expose']['description'] = 'Please select all that apply.';
   $handler->display->display_options['filters']['field_house_details_value']['expose']['operator'] = 'field_house_details_value_op';
   $handler->display->display_options['filters']['field_house_details_value']['expose']['identifier'] = 'field_house_details_value';
   $handler->display->display_options['filters']['field_house_details_value']['expose']['multiple'] = TRUE;
@@ -249,6 +250,7 @@ function housing_have_views_default_views() {
   $handler->display->display_options['filters']['field_preferences_value']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_preferences_value']['expose']['operator_id'] = 'field_preferences_value_op';
   $handler->display->display_options['filters']['field_preferences_value']['expose']['label'] = 'My housing:';
+  $handler->display->display_options['filters']['field_preferences_value']['expose']['description'] = 'Please select all that apply.';
   $handler->display->display_options['filters']['field_preferences_value']['expose']['operator'] = 'field_preferences_value_op';
   $handler->display->display_options['filters']['field_preferences_value']['expose']['identifier'] = 'field_preferences_value';
   $handler->display->display_options['filters']['field_preferences_value']['expose']['multiple'] = TRUE;
