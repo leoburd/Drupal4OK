@@ -1,4 +1,4 @@
-\#Drupal4OK
+Drupal4OK
 ==========
 
 ### Website
