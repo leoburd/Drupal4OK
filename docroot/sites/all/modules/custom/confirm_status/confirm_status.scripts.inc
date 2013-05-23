@@ -1,9 +1,5 @@
 <?php
 
-/*
- * Tropo doesn't support special UTF chars in text messages.
-According to int standards text messages with unicode chars should be limited to 70chars per message.
-Messages that are broken into multiple segments, might not arrive in proper sequence.*/
 /**
  * Implementation of hook_voipscript_get_script_names()
  */
@@ -13,10 +9,6 @@ function confirm_status_voipscript_get_script_names() {
   return $script_names;
 
 }
-
-/**
- *
- */
 
 /**
  * Implementation of hook_voipscript_load_script()
@@ -48,14 +40,27 @@ function confirm_status_voipscript_load_script($script_name, $options = NULL) {
       $options['call_id'] = '%cid';
       $options['source'] = '%source';
       $options['contact_info'] = '%contact_info';
-      $script->addLog('About to call
-      confirm_status_sms_process_response_script');
+      $script->addLog('About to call confirm_status_sms_process_response_script');
       $script->addGosub('confirm_status_sms_process_response_script', $options);
 
       break;
 
     case 'confirm_status_voice_response_handler_script':
-      confirm_status_voice_process_response_script();
+      // VoIP script for Voice channel
+      $script = new VoipScript('confirm_status_voice_response_handler_script');
+      // log the voice call
+      $log_msg = t("calling %dest_number on @date (id: %call_id)",
+        array('@date' => format_date(time(), 'custom', 'D, m/d/Y - H:i:s')));
+      $script->addLog($log_msg, 'confirm_status');
+
+      // below was the only way to avoid problems with special characters in the text message
+      $options['caller_number'] = '%caller_number';
+      $options['dest_number'] = '%dest_number';
+      $options['call_id'] = '%cid';
+      $options['source'] = '%source';
+      $options['contact_info'] = '%contact_info';
+      $script->addGosub('confirm_status_voice_process_response_script', $options);
+   
       // TODO
       // Clear nid from confirm_status_pending table.
     break;
@@ -78,9 +83,12 @@ watchdog('confirm_status', 'About to call _confirm_status_sms_process_response.'
 watchdog('confirm_status', "result_message: $result_message");
 
       $result = voipcall_special_chars($result_message);
+//$result = $result_message;
+watchdog('confirm_status', "result: $result");
 
       // Break message into 160 char chunks.
       $text_array = _confirm_status_make_160_char_messages($result);
+watchdog('confirm_status', "text_array: " . print_r($text_array, true));
 
       // Loop through message(s) and send.
       foreach ($text_array as $index => $text) {
@@ -94,6 +102,65 @@ watchdog('confirm_status', "result_message: $result_message");
 
         $script->addLog("sending $text");
       }
+      $script->addHangup();
+
+      // TODO
+      // Clear nid from confirm_status_pending table.
+      break;
+
+    case 'confirm_status_voice_process_response_script':
+      //Helper script to process SMS request
+      $script = new VoipScript('confirm_status_voice_process_response_script');
+watchdog('confirm_status', 'In confirm_status_voice_process_response_script');
+
+      // contact_info is passed to VOIP as a json encoded string. Decode to array to simplify handling.
+      $contact_info = (array) json_decode($options['contact_info']);
+      $options['contact_info'] = $contact_info;
+watchdog('confirm_status', 'These are our $options:' . print_r($options, TRUE));
+
+      $language   = $contact_info['language'];
+      $pref       = $contact_info['contact_preference'];
+      $nid        = $contact_info['nid'];
+      $callback   = $contact_info['callback'];
+      $message    = $contact_info['message'];
+
+      $options_menu = $message;
+      $input_options = array(
+        '1' => 'confirmed',
+        '2' => 'not_confirmed',
+        '#' => 'invalid_option',
+        'i' => 'invalid_option',
+        't' => 'invalid_option'
+      );
+      $invalid_msg = t('Invalid option selected.');
+      $script->addRunIvrMenu($options_menu, $input_options, $invalid_msg);
+      $script->addGoto('%ivr_option_selected');
+
+      $script->addLabel('confirmed');
+      // Call callback for "yes".
+      // Normal behavior: Leave status unchanged. Person still needs/has the thing the posted about.
+      call_user_func($callback, $nid, 'confirmed');
+// TODO: Make sure the prompts below get played in the appropriated language
+      $prompt = t('Thank you. Your reply has been processed.', array(), array('langcode' => $langcode));
+      $script->addSay($prompt);
+      $script->addGoto('hang up');
+
+      $script->addLabel('not_confirmed');
+      // Call callback to update status to "closed".
+      call_user_func($callback, $nid, 'not confirmed');
+      $prompt = t('Thank you. Your reply has been processed.', array(), array('langcode' => $langcode));
+      $script->addSay($prompt);
+      $script->addGoto('hang up');
+
+      $script->addLabel('invalid_option');
+      // Invalid response.   
+      call_user_func($callback, $nid, 'invalid');
+      $prompt = t('Sorry. Your reply was invalid and could not be processed.', array(), array('langcode' => $langcode));
+      $script->addSay($prompt);
+      $script->addGoto('hang up');
+
+      $script->addLabel('hang up');
+      $script->addSay(t('Goodbye.'));
       $script->addHangup();
 
       // TODO
@@ -215,8 +282,3 @@ function _confirm_status_sms_process_response($options) {
   return $ret;
 }
 
-function confirm_status_voice_process_response_script() {
-  // TODO
-  // process
-  // clear nid from confirm_status_pending table.
-}
