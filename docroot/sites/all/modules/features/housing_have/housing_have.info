@@ -49,6 +49,7 @@ features[field_instance][] = node-housing_have-field_person_language
 features[field_instance][] = node-housing_have-field_person_name
 features[field_instance][] = node-housing_have-field_person_phone_number
 features[field_instance][] = node-housing_need-field_beds
+features[field_instance][] = node-housing_need-field_housing_location
 features[field_instance][] = node-housing_need-field_person_contact_pref
 features[field_instance][] = node-housing_need-field_person_email
 features[field_instance][] = node-housing_need-field_person_language
