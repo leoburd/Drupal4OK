@@ -1,14 +1,14 @@
 Drupal4OK
 ==========
 
-## Website
+### Website
 [help4ok.org](http://help4ok.org)
 
-## Twitter
+### Twitter
 [#Drupal4OK](https://twitter.com/search?q=%23Drupal4OK&src=typd) - Coders, please join the conversation.
 [#Help4OkFeedback](https://twitter.com/search?q=%23Help4OkFeedback&src=typd) - Users/Testers, please send feedback, feature requests, input.
 
-## GitHub
+### GitHub
 [Pull requests](https://github.com/bryanhirsch/drupal4ok/pulls), [issues](https://github.com/bryanhirsch/drupal4ok/issues), ideas etc. welcome!
 
 Today (Thursday, May 23), we're going to try and post user input and feature requests on the [wiki](https://github.com/bryanhirsch/Drupal4OK/wiki), so people outside Portland can contribute.
@@ -16,7 +16,7 @@ Today (Thursday, May 23), we're going to try and post user input and feature req
 [https://github.com/bryanhirsch/drupal4ok](https://github.com/bryanhirsch/drupal4ok)
 [https://github.com/bryanhirsch/Drupal4OK/wiki](https://github.com/bryanhirsch/Drupal4OK/wiki)
 
-## Drupalcon Portland
+### Drupalcon Portland
 A bunch of volunteer coders at [Drupalcon Portland](http://portland2013.drupal.org/) are sprinting on [help4ok.org](http://help4ok.org) throughout the week.
 [http://portland2013.drupal.org/](http://portland2013.drupal.org/)
 
